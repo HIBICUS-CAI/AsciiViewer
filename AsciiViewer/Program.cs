@@ -11,6 +11,17 @@ namespace AsciiViewer
         {
             args.ToList().ForEach(Console.WriteLine);
 
+#if DEBUG
+            // リモートデバッグ時アタッチするまで待機用
+            if (args.Length >= 1 && int.TryParse(args[0], out int loopCount))
+            {
+                for (int i = 0; i < loopCount; i++)
+                {
+                    Thread.Sleep(1000);
+                }
+            }
+#endif
+
             {// コンソール関連
                 // サイズ取得、できれば設定
                 // 設定は無理らしい、WindowsTerminalを使用する想定なので設定ファイルにアクセスしたり自前で記入してもおう

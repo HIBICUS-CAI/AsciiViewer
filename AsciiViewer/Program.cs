@@ -65,27 +65,20 @@ namespace AsciiViewer
                 }
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {
-                    using var typeface = SKTypeface.FromFamilyName(fontName);
-                    using var paint = new SKPaint();
-#pragma warning disable CS0618 // Type or member is obsolete
-                    paint.Typeface = typeface;
-                    paint.TextSize = fontSize;
-                    paint.IsAntialias = true;
-                    paint.Color = SKColors.Black;
-                    var bounds = new SKRect();
-                    paint.MeasureText(character.ToString(), ref bounds);
-                    var width = (int)Math.Ceiling(bounds.Width);
-                    var height = (int)Math.Ceiling(bounds.Height);
-                    using var bitmap = new SKBitmap(width, height);
-                    using var canvas = new SKCanvas(bitmap);
-                    canvas.Clear(SKColors.White);
-                    canvas.DrawText(character.ToString(), -bounds.Left, -bounds.Top, paint);
-#pragma warning restore CS0618 // Type or member is obsolete
-                    using var image = SKImage.FromBitmap(bitmap);
-                    // #TODO ここバグっている、なんかnullが返ってくる
-                    using var data = image.Encode(SKEncodedImageFormat.Bmp, 100);
-                    using var stream = File.OpenWrite(outputPath);
-                    data.SaveTo(stream);
+                    using var skSurface = SKSurface.Create(new SKImageInfo(100, 100));
+                    using var skCanvas = skSurface.Canvas;
+                    using var skPaint = new SKPaint();
+                    skPaint.IsAntialias = true;
+                    skPaint.Color = SKColors.Black;
+                    var skFont = new SKFont(SKTypeface.FromFamilyName(fontName), fontSize);
+                    skCanvas.DrawText(character.ToString(), 20, 60, SKTextAlign.Center, skFont, skPaint);
+                    // 最終目的がファイルを保存ではないけど、BMPをサポートしないのが古いのが流石にあほらしい
+                    const SKEncodedImageFormat format = SKEncodedImageFormat.Webp;
+                    const int quality = 90;
+                    var pixelContent = skSurface.PeekPixels().GetPixelSpan();
+                    var bytes = skSurface.Snapshot().Encode(format, quality).ToArray();
+                    using var fs = new FileStream($"{outputPath}.webp", FileMode.OpenOrCreate);
+                    fs.Write(bytes, 0, bytes.Length);
                 }
             }
 

@@ -1,9 +1,16 @@
-﻿namespace AsciiViewer
+﻿using SkiaSharp;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
+
+namespace AsciiViewer
 {
     internal static class Program
     {
         private static int Main(string[] args)
         {
+            args.ToList().ForEach(Console.WriteLine);
+
             {// コンソール関連
                 // サイズ取得、できれば設定
                 // 設定は無理らしい、WindowsTerminalを使用する想定なので設定ファイルにアクセスしたり自前で記入してもおう
@@ -33,6 +40,53 @@
 
             {// 表現関連
                 // ascii文字を指定フォントとサイズで描画
+                const char character = 'A';
+                const string fontName = "Consolas";
+                const float fontSize = 48;
+                const string outputPath = "./output.bmp";
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+#pragma warning disable CA1416  // Windows-only API、本番は構成を分けた方が良い
+                    var font = new Font(fontName, fontSize, FontStyle.Regular, GraphicsUnit.Pixel);
+                    SizeF textSize;
+                    using (var tempBitmap = new Bitmap(1, 1))
+                    using (var tempGraphics = Graphics.FromImage(tempBitmap))
+                    {
+                        textSize = tempGraphics.MeasureString(character.ToString(), font);
+                    }
+
+                    using var bitmap = new Bitmap((int)Math.Ceiling(textSize.Width), (int)Math.Ceiling(textSize.Height));
+                    using var graphics = Graphics.FromImage(bitmap);
+                    graphics.Clear(Color.White);
+                    using Brush brush = new SolidBrush(Color.Black);
+                    graphics.DrawString(character.ToString(), font, brush, 0, 0);
+                    bitmap.Save(outputPath, ImageFormat.Bmp);
+#pragma warning restore CA1416
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    using var typeface = SKTypeface.FromFamilyName(fontName);
+                    using var paint = new SKPaint();
+#pragma warning disable CS0618 // Type or member is obsolete
+                    paint.Typeface = typeface;
+                    paint.TextSize = fontSize;
+                    paint.IsAntialias = true;
+                    paint.Color = SKColors.Black;
+                    var bounds = new SKRect();
+                    paint.MeasureText(character.ToString(), ref bounds);
+                    var width = (int)Math.Ceiling(bounds.Width);
+                    var height = (int)Math.Ceiling(bounds.Height);
+                    using var bitmap = new SKBitmap(width, height);
+                    using var canvas = new SKCanvas(bitmap);
+                    canvas.Clear(SKColors.White);
+                    canvas.DrawText(character.ToString(), -bounds.Left, -bounds.Top, paint);
+#pragma warning restore CS0618 // Type or member is obsolete
+                    using var image = SKImage.FromBitmap(bitmap);
+                    // #TODO ここバグっている、なんかnullが返ってくる
+                    using var data = image.Encode(SKEncodedImageFormat.Bmp, 100);
+                    using var stream = File.OpenWrite(outputPath);
+                    data.SaveTo(stream);
+                }
             }
 
             return 0;

@@ -21,13 +21,13 @@ on:
 
 jobs:
   analyze:
-    name: Analyze (${{ matrix.language }})
+    name: Analyze (${{ matrix.language }} | ${{ matrix.os }})
     # Runner size impacts CodeQL analysis time. To learn more, please see:
     #   - https://gh.io/recommended-hardware-resources-for-running-codeql
     #   - https://gh.io/supported-runners-and-hardware-resources
     #   - https://gh.io/using-larger-runners (GitHub.com only)
     # Consider using larger runners or machines with greater resources for possible analysis time improvements.
-    runs-on: ${{ 'ubuntu-latest', 'windows-latest', 'ubuntu-24.04-arm' }}
+    runs-on: ${{ matrix.os }}
     permissions:
       # required for all workflows
       security-events: write
@@ -42,15 +42,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # 現状CodeQLがarm64をサポートしていない模様なので一旦コメントアウト、ラズパイで使いたいのに残念
+        #os: [ubuntu-latest, windows-latest, ubuntu-24.04-arm]
+        os: [ubuntu-latest, windows-latest]
         include:
         - language: csharp
           build-mode: none
-        - language: c-cpp
-          build-mode: autobuild
-        - language: python
-          build-mode: none
-        - language: javascript-typescript
-          build-mode: none
+        #- language: c-cpp
+          #build-mode: autobuild
+        #- language: python
+          #build-mode: none
         # CodeQL supports the following values keywords for 'language': 'actions', 'c-cpp', 'csharp', 'go', 'java-kotlin', 'javascript-typescript', 'python', 'ruby', 'swift'
         # Use `c-cpp` to analyze code written in C, C++ or both
         # Use 'java-kotlin' to analyze code written in Java, Kotlin or both

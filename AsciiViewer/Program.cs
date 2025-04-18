@@ -1,21 +1,10 @@
-﻿namespace AsciiViewer;
-
-internal static class Program
+﻿namespace AsciiViewer
 {
-    private static void Main(string[] args)
+    internal static class Program
     {
-#if DEBUG
-        args.ToList().ForEach(Console.WriteLine);
-        // リモートデバッグ時アタッチするまで待機用
-        if (args.Length >= 1 && int.TryParse(args[0], out int loopCount))
+        private static void Main(string[] args)
         {
-            for (int i = 0; i < loopCount; i++)
-            {
-                Thread.Sleep(1000);
-            }
+            Console.WriteLine("Hello, World!");
         }
-#endif
-
-        Console.WriteLine("Hello, World!");
     }
 }

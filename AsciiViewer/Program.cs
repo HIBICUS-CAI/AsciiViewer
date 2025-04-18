@@ -61,6 +61,11 @@ namespace AsciiViewer
                     using Brush brush = new SolidBrush(Color.Black);
                     graphics.DrawString(character.ToString(), font, brush, 0, 0);
                     bitmap.Save(outputPath, ImageFormat.Bmp);
+                    var data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
+                    var bytes = new byte[Math.Abs(data.Stride) * bitmap.Height];
+                    var ptr = data.Scan0;
+                    Marshal.Copy(ptr, bytes, 0, bytes.Length);
+                    var pixelContent = bytes.AsSpan();
 #pragma warning restore CA1416
                 }
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
@@ -69,12 +74,14 @@ namespace AsciiViewer
                     using var skCanvas = skSurface.Canvas;
                     using var skPaint = new SKPaint();
                     skPaint.IsAntialias = true;
+                    skPaint.Color = SKColors.White;
+                    skCanvas.DrawRect(0, 0, 100, 100, skPaint);
                     skPaint.Color = SKColors.Black;
                     var skFont = new SKFont(SKTypeface.FromFamilyName(fontName), fontSize);
                     skCanvas.DrawText(character.ToString(), 20, 60, SKTextAlign.Center, skFont, skPaint);
                     // 最終目的がファイルを保存ではないけど、BMPをサポートしないのが古いのが流石にあほらしい
                     const SKEncodedImageFormat format = SKEncodedImageFormat.Webp;
-                    const int quality = 90;
+                    const int quality = 100;
                     var pixelContent = skSurface.PeekPixels().GetPixelSpan();
                     var bytes = skSurface.Snapshot().Encode(format, quality).ToArray();
                     using var fs = new FileStream($"{outputPath}.webp", FileMode.OpenOrCreate);

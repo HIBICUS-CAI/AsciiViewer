@@ -52,12 +52,20 @@ public class LoggerTests
         // Arrange
         var logger = new NestableLogger { Category = "TestCategory" };
         logger.PushNest("TestNest");
+        string nest = string.Empty;
+        string msg = string.Empty;
+        LogPrinter.Print += (_, args) =>
+        {
+            nest = args.LogElement.ProcessNestFrame?[^1] ?? "null";
+            msg = args.LogElement.Message ?? "null";
+        };
 
         // Act
         logger.Log("TestMessage");
 
         // Assert
-        // Debug出力を直接確認するにはモックが必要ですが、ここでは例外が発生しないことを確認します。
+        Assert.True(nest == "TestNest");
+        Assert.True(msg == "TestMessage");
     }
 
     // LogNestのテスト
@@ -144,9 +152,122 @@ public class LoggerTests
     {
         public static NestableLogger Logger { get; } = new() { Category = nameof(TestLogger) };
 
-        public static NestableLogger Get()
+        public static StandardLogger Get()
         {
             return Logger;
         }
+    }
+}
+
+public class StandardLoggerTests
+{
+    [Fact]
+    public void StandardLogger_Log_ログが正しく記録される()
+    {
+        // Arrange
+        var logger = new StandardLogger { Category = "TestCategory" };
+        var logElement = new LogElement();
+
+        // Act
+        logger.Log("TestMessage", logElement);
+
+        // Assert
+        Assert.Equal("TestCategory", logElement.Category);
+        Assert.Equal("TestMessage", logElement.Message);
+    }
+
+    [Fact]
+    public void StandardLogger_Log_ログエレメントが指定されない場合に新しいインスタンスが作成される()
+    {
+        // Arrange
+        var logger = new StandardLogger { Category = "TestCategory" };
+
+        // Act
+        logger.Log("TestMessage");
+
+        // Assert
+        // ログのアップロードはLogPrinterに委譲されるため、ここでは例外が発生しないことを確認します。
+    }
+
+    [Fact]
+    public void StandardLogger_LoggerFeature_標準機能を返す()
+    {
+        // Arrange
+        var logger = new StandardLogger();
+
+        // Act
+        var feature = logger.LoggerFeature;
+
+        // Assert
+        Assert.Equal(LoggerFeature.Standard, feature);
+    }
+}
+
+public class LogPrinterTests
+{
+    [Fact]
+    public void LogPrinter_RecordLog_ログが正しく記録される()
+    {
+        // Arrange
+        var logElement = new LogElement
+        {
+            Category = "TestCategory",
+            Message = "TestMessage"
+        };
+        const LoggerFeature loggerFeature = LoggerFeature.Standard;
+        LogElement? recordedLog = null;
+
+        LogPrinter.Print += (_, args) =>
+        {
+            recordedLog = args.LogElement;
+        };
+
+        // Act
+        LogPrinter.RecordLog(logElement, loggerFeature);
+
+        // Assert
+        Assert.NotNull(recordedLog);
+        Assert.Equal("TestCategory", recordedLog?.Category);
+        Assert.Equal("TestMessage", recordedLog?.Message);
+    }
+
+    [Fact]
+    public void LogPrinter_RecordLog_イベントが登録されていない場合でも例外が発生しない()
+    {
+        // Arrange
+        var logElement = new LogElement
+        {
+            Category = "TestCategory",
+            Message = "TestMessage"
+        };
+        const LoggerFeature loggerFeature = LoggerFeature.Standard;
+
+        // Act & Assert
+        var exception = Record.Exception(() => LogPrinter.RecordLog(logElement, loggerFeature));
+        Assert.Null(exception);
+    }
+
+    [Fact]
+    public void LogPrinter_Print_イベントが正しく発火される()
+    {
+        // Arrange
+        var logElement = new LogElement
+        {
+            Category = "TestCategory",
+            Message = "TestMessage"
+        };
+        const LoggerFeature loggerFeature = LoggerFeature.Standard;
+        bool eventFired = false;
+
+        LogPrinter.Print += (_, _) =>
+        {
+            eventFired = true;
+        };
+
+        // Act
+        LogPrinter.RecordLog(logElement, loggerFeature);
+
+        // Assert
+        Assert.True(eventFired);
     }
 }

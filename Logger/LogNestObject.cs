@@ -46,7 +46,13 @@ public class LogNestObject : IDisposable
     {
         get
         {
-            m_logger.UseSpecificNestObject = (true, this);
+            var topModuleNest = m_logger.ModuleNests.Peek();
+            var topProcessNest = topModuleNest.ProcessNests.Peek();
+            if (topModuleNest != ModuleNest || topProcessNest != ProcessNest)
+            {
+                m_logger.UseSpecificNestObject = (true, this);
+            }
+
             return m_logger;
         }
     }

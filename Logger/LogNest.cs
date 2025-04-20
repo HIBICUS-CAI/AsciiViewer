@@ -1,6 +1,4 @@
-﻿using static Logger.NestableLogger;
-
-namespace Logger;
+﻿namespace Logger;
 
 /// <summary>
 /// 明示的に<see cref="NestableLogger"/>ロガーを指定してネストを作成するクラス、Disposeでネストを解放する<br/>
@@ -30,9 +28,9 @@ namespace Logger;
 public class LogNest : IDisposable
 {
     /// <summary>
-    /// ネストされた処理単位の情報
+    /// ネストされた処理のハンドル
     /// </summary>
-    internal ProcessNest ProcessNest { get; }
+    private readonly object m_processNestHandle;
 
     /// <summary>
     /// ロガーのインスタンス
@@ -47,9 +45,9 @@ public class LogNest : IDisposable
     {
         get
         {
-            if (m_logger.ProcessNests.Peek() != ProcessNest)
+            if (!m_logger.IsTopNest(m_processNestHandle))
             {
-                m_logger.UseSpecificNestObject = (true, ProcessNest);
+                m_logger.UseSpecificNestObject = (true, m_processNestHandle);
             }
 
             return m_logger;
@@ -64,8 +62,7 @@ public class LogNest : IDisposable
     public LogNest(NestableLogger logger, string? processNest = null)
     {
         m_logger = logger;
-        ProcessNest = new ProcessNest { Name = processNest ?? $"Process_{m_logger.ProcessNests.Count}" };
-        m_logger.ProcessNests.Push(ProcessNest);
+        m_processNestHandle = m_logger.PushNest(processNest);
     }
 
     /// <summary>
@@ -105,6 +102,4 @@ public class LogNest : IDisposable
 /// <param name="processNest">処理のネスト情報、指定しない場合は呼び出し元の関数名になる</param>
 public class LogNest<TLoggerInstanceType>(string? processNest = null)
     : LogNest(TLoggerInstanceType.Get(), processNest)
-    where TLoggerInstanceType : ILoggerInstance
-{
-}
+    where TLoggerInstanceType : ILoggerInstance;

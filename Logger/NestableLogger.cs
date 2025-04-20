@@ -72,7 +72,29 @@ public class NestableLogger
     /// 一回任意のログを記録した後、falseに戻る<br/>
     /// 処理やモジュールのネスト流れが追いづらくなるため、できるだけ使用しないことを推奨
     /// </summary>
-    internal (bool enabled, ProcessNest targetProcessNest) UseSpecificNestObject { get; set; } = (false, null)!;
+    internal (bool enabled, object targetProcessNest) UseSpecificNestObject { get; set; } = (false, null)!;
+
+    /// <summary>
+    /// ネストを作成
+    /// </summary>
+    /// <param name="processNest">処理ネストの名前</param>
+    /// <returns>ネストのハンドル</returns>
+    internal object PushNest(string? processNest)
+    {
+        var newProcessNest = new ProcessNest { Name = processNest ?? $"Process_{ProcessNests.Count}" };
+        ProcessNests.Push(newProcessNest);
+        return (newProcessNest, ProcessNests.Count);
+    }
+
+    /// <summary>
+    /// 指定したネストのハンドルが最上層かを確認
+    /// </summary>
+    /// <param name="nestHandle">ネストのハンドル</param>
+    /// <returns>最上層かどうか</returns>
+    internal bool IsTopNest(object nestHandle)
+    {
+        return nestHandle is (ProcessNest processNest, int count) && ProcessNests.Peek() == processNest && ProcessNests.Count == count;
+    }
 
     /// <summary>
     /// ログを記録する
@@ -82,13 +104,14 @@ public class NestableLogger
     public void Log(string message)
     {
         var processNests = ProcessNests;
-        if (UseSpecificNestObject.enabled)
+        if (UseSpecificNestObject is { enabled: true, targetProcessNest: (ProcessNest nest, int count) } && ProcessNests.Contains(nest))
         {
             processNests = new Stack<ProcessNest>();
+            int index = 0;
             foreach (var existedProcessNest in ProcessNests.Reverse())
             {
                 processNests.Push(existedProcessNest);
-                if (existedProcessNest == UseSpecificNestObject.targetProcessNest)
+                if (++index >= count)
                 {
                     break;
                 }

@@ -1,10 +1,10 @@
-namespace Logger.Test;
+ï»¿namespace Logger.Test;
 
 public class LoggerTests
 {
-    // NestableLogger‚ÌƒeƒXƒg
+    // NestableLoggerã®ãƒ†ã‚¹ãƒˆ
     [Fact]
-    public void NestableLogger_PushNest_ƒlƒXƒg‚ª³‚µ‚­’Ç‰Á‚³‚ê‚é()
+    public void NestableLogger_PushNest_ãƒã‚¹ãƒˆãŒæ­£ã—ãè¿½åŠ ã•ã‚Œã‚‹()
     {
         // Arrange
         var logger = new NestableLogger();
@@ -18,7 +18,7 @@ public class LoggerTests
     }
 
     [Fact]
-    public void NestableLogger_IsTopNest_Åã‘w‚ÌƒlƒXƒg‚ğ³‚µ‚­”»’è‚·‚é()
+    public void NestableLogger_IsTopNest_æœ€ä¸Šå±¤ã®ãƒã‚¹ãƒˆã‚’æ­£ã—ãåˆ¤å®šã™ã‚‹()
     {
         // Arrange
         var logger = new NestableLogger();
@@ -32,7 +32,7 @@ public class LoggerTests
     }
 
     [Fact]
-    public void NestableLogger_IsTopNest_Åã‘w‚Å‚È‚¢ƒlƒXƒg‚ğ³‚µ‚­”»’è‚·‚é()
+    public void NestableLogger_IsTopNest_æœ€ä¸Šå±¤ã§ãªã„ãƒã‚¹ãƒˆã‚’æ­£ã—ãåˆ¤å®šã™ã‚‹()
     {
         // Arrange
         var logger = new NestableLogger();
@@ -47,7 +47,7 @@ public class LoggerTests
     }
 
     [Fact]
-    public void NestableLogger_Log_ƒƒO‚ª³‚µ‚­‹L˜^‚³‚ê‚é()
+    public void NestableLogger_Log_ãƒ­ã‚°ãŒæ­£ã—ãè¨˜éŒ²ã•ã‚Œã‚‹()
     {
         // Arrange
         var logger = new NestableLogger { Category = "TestCategory" };
@@ -57,12 +57,12 @@ public class LoggerTests
         logger.Log("TestMessage");
 
         // Assert
-        // Debugo—Í‚ğ’¼ÚŠm”F‚·‚é‚É‚Íƒ‚ƒbƒN‚ª•K—v‚Å‚·‚ªA‚±‚±‚Å‚Í—áŠO‚ª”­¶‚µ‚È‚¢‚±‚Æ‚ğŠm”F‚µ‚Ü‚·B
+        // Debugå‡ºåŠ›ã‚’ç›´æ¥ç¢ºèªã™ã‚‹ã«ã¯ãƒ¢ãƒƒã‚¯ãŒå¿…è¦ã§ã™ãŒã€ã“ã“ã§ã¯ä¾‹å¤–ãŒç™ºç”Ÿã—ãªã„ã“ã¨ã‚’ç¢ºèªã—ã¾ã™ã€‚
     }
 
-    // LogNest‚ÌƒeƒXƒg
+    // LogNestã®ãƒ†ã‚¹ãƒˆ
     [Fact]
-    public void LogNest_ƒlƒXƒg‚ª³‚µ‚­’Ç‰Á‚¨‚æ‚Ñ‰ğ•ú‚³‚ê‚é()
+    public void LogNest_ãƒã‚¹ãƒˆãŒæ­£ã—ãè¿½åŠ ãŠã‚ˆã³è§£æ”¾ã•ã‚Œã‚‹()
     {
         // Arrange
         var logger = new NestableLogger();
@@ -80,7 +80,7 @@ public class LoggerTests
     }
 
     [Fact]
-    public void LogNest_Logger_“Á’è‚ÌƒlƒXƒgƒIƒuƒWƒFƒNƒg‚ğg—p‚·‚é()
+    public void LogNest_Logger_ç‰¹å®šã®ãƒã‚¹ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ä½¿ç”¨ã™ã‚‹()
     {
         // Arrange
         var logger = new NestableLogger();
@@ -96,7 +96,7 @@ public class LoggerTests
     }
 
     [Fact]
-    public void LogNest_Logger_“Á’è‚ÌƒlƒXƒgƒIƒuƒWƒFƒNƒg‚ğg—p‚ªÅã‘w‚È‚Ì‚Å‰½‚à‚µ‚È‚¢()
+    public void LogNest_Logger_ç‰¹å®šã®ãƒã‚¹ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ä½¿ç”¨ãŒæœ€ä¸Šå±¤ãªã®ã§ä½•ã‚‚ã—ãªã„()
     {
         // Arrange
         var logger = new NestableLogger();
@@ -111,9 +111,9 @@ public class LoggerTests
         Assert.Null(logger.UseSpecificNestObject.targetProcessNest);
     }
 
-    // LogNest<TLoggerInstanceType>‚ÌƒeƒXƒg
+    // LogNest<TLoggerInstanceType>ã®ãƒ†ã‚¹ãƒˆ
     [Fact]
-    public void LogNestTLoggerInstanceType_ƒƒK[ƒCƒ“ƒXƒ^ƒ“ƒX‚ğ³‚µ‚­g—p‚·‚é()
+    public void LogNestTLoggerInstanceType_ãƒ­ã‚¬ãƒ¼ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’æ­£ã—ãä½¿ç”¨ã™ã‚‹()
     {
         // Act
         using (new LogNest<TestLogger>("TestNest"))
@@ -127,9 +127,9 @@ public class LoggerTests
         Assert.Empty(TestLogger.Logger.ProcessNests);
     }
 
-    // ILoggerInstance‚ÌƒeƒXƒg
+    // ILoggerInstanceã®ãƒ†ã‚¹ãƒˆ
     [Fact]
-    public void ILoggerInstance_Get_ƒƒK[ƒCƒ“ƒXƒ^ƒ“ƒX‚ğ³‚µ‚­æ“¾‚·‚é()
+    public void ILoggerInstance_Get_ãƒ­ã‚¬ãƒ¼ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’æ­£ã—ãå–å¾—ã™ã‚‹()
     {
         // Act
         var logger = TestLogger.Get();
@@ -139,7 +139,7 @@ public class LoggerTests
         Assert.IsType<NestableLogger>(logger);
     }
 
-    // ƒeƒXƒg—p‚ÌILoggerInstanceÀ‘•
+    // ãƒ†ã‚¹ãƒˆç”¨ã®ILoggerInstanceå®Ÿè£…
     private abstract class TestLogger : ILoggerInstance
     {
         public static NestableLogger Logger { get; } = new() { Category = nameof(TestLogger) };

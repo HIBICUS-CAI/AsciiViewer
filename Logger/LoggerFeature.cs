@@ -3,7 +3,7 @@
 /// ロガーの機能フラグ
 /// </summary>
 [Flags]
-internal enum LoggerFeature
+public enum LoggerFeature
 {
     /// <summary>
     /// 何もない、標準的なロガー

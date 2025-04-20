@@ -15,11 +15,6 @@ public class StandardLogger
     public string Category { get; init; } = string.Empty;
 
     /// <summary>
-    /// 記録されたログ情報のキュー
-    /// </summary>
-    private Queue<(LogElement logElement, LoggerFeature loggerFeature)> LogQueue { get; } = new();
-
-    /// <summary>
     /// ロガーの機能マスク、<see cref="StandardLogger"/>的には<see cref="LoggerFeature.Standard"/>
     /// </summary>
     internal virtual LoggerFeature LoggerFeature => LoggerFeature.Standard;
@@ -43,10 +38,6 @@ public class StandardLogger
     /// <param name="logElement"></param>
     private void _UploadLog(LogElement logElement)
     {
-        LogQueue.Enqueue((logElement, LoggerFeature));
-        // #TODO 簡易版でとりあえずすぐに出す
-        var (info, _) = LogQueue.Dequeue();
-        System.Diagnostics.Debug.WriteLine($"[{info.Category}], {info.DateTime.TimeOfDay}");
-        System.Diagnostics.Debug.WriteLine($"\t{string.Join('/', info.ProcessNestFrame ?? [])}, {info.Message}");
+        LogPrinter.RecordLog(logElement, LoggerFeature);
     }
 }

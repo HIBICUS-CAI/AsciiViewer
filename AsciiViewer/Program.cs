@@ -18,6 +18,9 @@ internal static class Program
         }
 #endif
 
+        LogPrinter.Print += PrintLogToDebugOutput;
+        LogPrinter.Print += PrintLogToStdOutput;
+
         using (new LogNest<Viewer>("A"))
         {
             Viewer.Logger.Log("hello world 0");
@@ -70,6 +73,26 @@ internal static class Program
         using (new LogNest(tempLogger, "temp hoge"))
         {
             tempLogger.Log("hello world 8");
+        }
+
+        LogPrinter.Print -= PrintLogToDebugOutput;
+        LogPrinter.Print -= PrintLogToStdOutput;
+        return;
+
+        void PrintLogToDebugOutput(object? _, LogPrintArgs logPrintArgs)
+        {
+            var logInfo = logPrintArgs.LogElement;
+            bool isNestable = logPrintArgs.LoggerFeature.HasFlag(LoggerFeature.Nestable);
+            System.Diagnostics.Debug.WriteLine($"[{logInfo.Category}], {logInfo.DateTime.TimeOfDay}");
+            System.Diagnostics.Debug.WriteLine($"\t{string.Join('/', isNestable ? logInfo.ProcessNestFrame ?? [] : [])}, {logInfo.Message}");
+        }
+
+        void PrintLogToStdOutput(object? _, LogPrintArgs logPrintArgs)
+        {
+            var logInfo = logPrintArgs.LogElement;
+            bool isNestable = logPrintArgs.LoggerFeature.HasFlag(LoggerFeature.Nestable);
+            Console.WriteLine($"[{logInfo.Category}], {logInfo.DateTime.TimeOfDay}");
+            Console.WriteLine($"\t{string.Join('/', isNestable ? logInfo.ProcessNestFrame ?? [] : [])}, {logInfo.Message}");
         }
     }
 }

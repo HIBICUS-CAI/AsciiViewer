@@ -1,6 +1,6 @@
 ﻿namespace Logger;
 /// <summary>
-/// <see cref="NestableLogger"/>取得用のインターフェース
+/// <see cref="StandardLogger"/>取得用のインターフェース
 /// </summary>
 ///
 /// <remarks>
@@ -8,7 +8,9 @@
 /// ログを出したいモジュールに対して、基本こちらを継承する必要がある
 /// </remarks>
 ///
-/// <remarks>staticクラスに非対応</remarks>
+/// <remarks>
+/// staticクラスに非対応、使いたい場合はクラスに対してのstaticを外して継承する
+/// </remarks>
 ///
 /// <example>
 /// <code>
@@ -25,8 +27,8 @@
 public interface ILoggerInstance
 {
     /// <summary>
-    /// <see cref="NestableLogger"/>を取得する
+    /// <see cref="StandardLogger"/>を取得する
     /// </summary>
-    /// <returns><see cref="NestableLogger"/>のインスタンス</returns>
-    static abstract NestableLogger Get();
+    /// <returns><see cref="StandardLogger"/>のインスタンス</returns>
+    static abstract StandardLogger Get();
 }

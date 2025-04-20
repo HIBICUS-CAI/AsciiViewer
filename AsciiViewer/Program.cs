@@ -78,7 +78,7 @@ internal abstract class Viewer : ILoggerInstance
 {
     public static NestableLogger Logger { get; } = new() { Category = nameof(Viewer) };
 
-    public static NestableLogger Get()
+    public static StandardLogger Get()
     {
         return Logger;
     }

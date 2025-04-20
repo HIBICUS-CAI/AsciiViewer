@@ -101,5 +101,5 @@ public class LogNest : IDisposable
 ///
 /// <param name="processNest">処理のネスト情報、指定しない場合は呼び出し元の関数名になる</param>
 public class LogNest<TLoggerInstanceType>(string? processNest = null)
-    : LogNest(TLoggerInstanceType.Get(), processNest)
+    : LogNest(TLoggerInstanceType.Get() as NestableLogger ?? throw new InvalidOperationException($"cannot use {nameof(LogNest)} in logger which is not nestable"), processNest)
     where TLoggerInstanceType : ILoggerInstance;

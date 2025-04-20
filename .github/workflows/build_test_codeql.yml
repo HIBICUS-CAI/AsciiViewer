@@ -40,13 +40,13 @@ jobs:
         dotnet-version: ${{ matrix.dotnet }}
 
     - name: Restore dependencies
-      run: dotnet restore --verbosity detailed
+      run: dotnet restore
 
     - name: Build
-      run: dotnet build --no-restore --configuration ${{ matrix.configuration }} --verbosity detailed
+      run: dotnet build --no-restore --configuration ${{ matrix.configuration }}
 
     - name: Run tests
-      run: dotnet test --no-build --configuration ${{ matrix.configuration }} --verbosity detailed
+      run: dotnet test --no-build --configuration ${{ matrix.configuration }}
 
   dotnet-publish:
     name: Publish (.NET ${{ matrix.dotnet.version }} | ${{ matrix.os }} | ${{ matrix.configuration.project }})
@@ -83,7 +83,7 @@ jobs:
           dotnet-version: ${{ matrix.dotnet.version }}
 
       - name: Republish project
-        run: dotnet publish ${{ matrix.publish-project.path }} -p:PublishProfile=${{ matrix.publish-project.path }}/Properties/PublishProfiles/${{ matrix.configuration.pubxml }}-${{ matrix.rid }}.pubxml --runtime ${{ matrix.rid }} --configuration ${{ matrix.configuration.project }} --framework ${{ matrix.dotnet.tfm }} --artifacts-path ${{ matrix.publish-project.path }}/artifacts --disable-build-servers --force --verbosity detailed
+        run: dotnet publish ${{ matrix.publish-project.path }} -p:PublishProfile=${{ matrix.publish-project.path }}/Properties/PublishProfiles/${{ matrix.configuration.pubxml }}-${{ matrix.rid }}.pubxml --runtime ${{ matrix.rid }} --configuration ${{ matrix.configuration.project }} --framework ${{ matrix.dotnet.tfm }} --artifacts-path ${{ matrix.publish-project.path }}/artifacts --disable-build-servers --force
 
       - name: upload-artifact
         uses: actions/upload-artifact@v4

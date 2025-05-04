@@ -1,4 +1,5 @@
-﻿using Logger;
+﻿using System.CommandLine;
+using Logger;
 
 namespace AsciiViewer;
 
@@ -6,17 +7,25 @@ internal static class Program
 {
     private static void Main(string[] args)
     {
-#if DEBUG
-        args.ToList().ForEach(Console.WriteLine);
-        // リモートデバッグ時アタッチするまで待機用
-        if (args.Length >= 1 && int.TryParse(args[0], out int loopCount))
+        var debugWaitingOption = new Option<int>(
+            aliases: ["--debug-waiting", "-w"],
+            description: "wait for N seconds after start up bu before doing task.",
+            getDefaultValue: () => 0
+        );
+
+        var rootCommand = new RootCommand("AsciiViewer, now it's only a playground.");
+        rootCommand.AddOption(debugWaitingOption);
+        rootCommand.SetHandler(_Test, debugWaitingOption);
+
+        _ = rootCommand.Invoke(args);
+    }
+
+    private static void _Test(int debugWaitingSeconds)
+    {
+        if (debugWaitingSeconds > 0)
         {
-            for (int i = 0; i < loopCount; i++)
-            {
-                Thread.Sleep(1000);
-            }
+            Thread.Sleep(1000 * debugWaitingSeconds);
         }
-#endif
 
         LogPrinter.Print += PrintLogToDebugOutput;
         LogPrinter.Print += PrintLogToStdOutput;

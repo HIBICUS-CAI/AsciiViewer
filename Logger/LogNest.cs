@@ -58,7 +58,7 @@ public class LogNest : IDisposable
     /// <see cref="Logger.ILoggerInstance"/>を実装しているロガーを使用するコンストラクタ
     /// </summary>
     /// <param name="logger">ロガーのインスタンス</param>
-    /// <param name="processNest">処理のネスト情報、指定しない場合は呼び出し元の関数名になる</param>
+    /// <param name="processNest">処理のネスト情報、指定しない場合はネストの深さになる</param>
     public LogNest(NestableLogger logger, string? processNest = null)
     {
         m_logger = logger;

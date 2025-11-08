@@ -5,7 +5,7 @@ namespace AsciiViewer;
 /// <summary>
 /// 画像をサンプリングし、TexelDistributionを使って特徴を評価するモジュール
 /// </summary>
-public class ImageProbe
+public class ImageProbe : IDisposable
 {
     private readonly SKBitmap _bitmap;
 

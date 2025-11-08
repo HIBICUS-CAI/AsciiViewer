@@ -5,7 +5,7 @@ namespace AsciiViewer;
 /// <summary>
 /// フォントを描画し、TexelDistributionを使って特徴を評価するモジュール
 /// </summary>
-public class FontProbe
+public class FontProbe : IDisposable
 {
     private readonly string _fontFamily;
     private readonly float _fontSize;
